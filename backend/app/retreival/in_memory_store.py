@@ -79,3 +79,6 @@ class InMemoryStore(Retrieval):
         except Exception as e:
             logger.exception("Failed to delete document %s", document_id)
             raise CustomException(e, sys) from e
+        
+    def get_chunkDB(self) -> list[SearchResult]:
+        return self.chunk_db

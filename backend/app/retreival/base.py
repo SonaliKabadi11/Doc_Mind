@@ -71,6 +71,7 @@ class Retrieval(ABC):
 
     @abstractmethod
     def delete_document(self, document_id: str) -> int:
+
         """Deletes all stored chunks for a document.
 
         Parameters
@@ -89,3 +90,9 @@ class Retrieval(ABC):
             if document_id has no stored chunks
         """
         ...
+
+        def get_chunks(self)-> list[SearchResult]:
+            """
+            Returns
+            list[SearchResult] = list of chunks and embeddings
+            """
