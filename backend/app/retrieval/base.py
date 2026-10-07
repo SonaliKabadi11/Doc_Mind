@@ -1,25 +1,24 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import List, Sequence
+from collections.abc import Sequence
 
 import numpy as np
 
+from app.exception import DocumentNotFoundError
+from app.models import Chunk, SearchResult
 
-class DocumentNotFoundError(Exception):
-    """Raised when an operation references a document_id with no stored chunks."""
+__all__ = ["DocumentNotFoundError", "Retrieval", "SearchResult"]
 
-
-@dataclass
-class SearchResult:
-    chunk_text: str
-    score: float
-    index: int
+# @dataclass
+# class SearchResult:
+#     chunk_text: str
+#     score: float
+#     index: int
 
 
 class Retrieval(ABC):
     @abstractmethod
-    def add_chunks(self, document_id: str, chunks: Sequence[str], embeddings: np.ndarray) -> int:
-        """Adds the chunks and their embeddings to the store for a given document.
+    def add_chunks(self, document_id: str, chunks: Sequence[Chunk], embeddings: np.ndarray) -> int:
+        """Store chunks and their normalized embeddings (num_chunks, dim) for given document
 
         Parameters
         ----------
@@ -45,7 +44,7 @@ class Retrieval(ABC):
     @abstractmethod
     def search(
         self, document_id: str, query_embedding: np.ndarray, top_k: int
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         """Searches for the top_k chunks most similar to `query_embedding` within one document.
 
         Parameters
@@ -91,8 +90,7 @@ class Retrieval(ABC):
         """
         ...
 
-        def get_chunks(self)-> list[SearchResult]:
-            """
-            Returns
-            list[SearchResult] = list of chunks and embeddings
-            """
+    @abstractmethod
+    def get_chunks(self) -> list[Chunk]:
+        """Return all stored chunks."""
+        ...

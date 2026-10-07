@@ -1,11 +1,13 @@
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.api.routes import router
 from app.config.config import get_settings
+from app.exception import DocumentNotFoundError, IngestionError
 from app.logger import configure_logging
 
 settings = get_settings()
@@ -14,8 +16,18 @@ logger = logging.getLogger(__name__)
 
 #  It turns a standard asynchronous function into a structured context manager.
 @asynccontextmanager
-async def lifespan(_:FastAPI):
+async def lifespan(app:FastAPI):
+    from app.ingestion.base import Ingestion
+    from app.retrieval.in_memory_store import InMemoryStore
+    from app.services.rag_service import RAGService
+
     logger.info("%s starting up in '%s' environment.", settings.app_name, settings.environment)
+    ingestion = Ingestion(
+        model_name = settings.embedding_model,
+        chunk_size = settings.chunk_size,
+        chunk_overlap = settings.chunk_overlap
+    )
+    app.state.rag_service = RAGService(ingestion, InMemoryStore())
     yield
     logger.info("%s shutting down.", settings.app_name)
 
@@ -38,4 +50,12 @@ app.add_middleware(
 
 
 app.include_router(router)
+@app.exception_handler(DocumentNotFoundError)
+async def not_found_handler(_: Request, exc: DocumentNotFoundError) -> JSONResponse:
+    return JSONResponse(status_code=404, content={"detail": str(exc)})
+
+
+@app.exception_handler(IngestionError)
+async def ingestion_handler(_: Request, exc: IngestionError) -> JSONResponse:
+    return JSONResponse(status_code=422, content={"detail": str(exc)})
 

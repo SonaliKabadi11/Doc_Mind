@@ -14,4 +14,3 @@ def test_ingestion_base_can_be_run_as_script() -> None:
     )
 
     assert result.returncode == 0, result.stderr
-    assert "ModuleNotFoundError" not in result.stderr

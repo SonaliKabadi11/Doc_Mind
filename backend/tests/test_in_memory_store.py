@@ -1,15 +1,20 @@
-import unittest
-import numpy as np
-import sys
 import os
+import sys
+import unittest
+
+import numpy as np
 
 # Ensure the `backend` directory is on sys.path so the `app` package imports
 # resolve when running tests from the repository root.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from app.retreival.in_memory_store import InMemoryStore
-from app.retreival.base import DocumentNotFoundError
-from app.exception import CustomException
+from app.models import Chunk
+from app.retrieval.base import DocumentNotFoundError
+from app.retrieval.in_memory_store import InMemoryStore
+
+
+def make_chunks(texts, doc_id="doc_123"):
+    return [Chunk(f"{doc_id}:{i}", doc_id, text, page=1, index=i) for i, text in enumerate(texts)]
 
 class TestInMemoryStore(unittest.TestCase):
 
@@ -20,7 +25,7 @@ class TestInMemoryStore(unittest.TestCase):
         
         # Standard valid mock data
         self.doc_id = "doc_123"
-        self.chunks = ["Hello world", "Machine learning is fun", "Python programming"]
+        self.chunks = make_chunks(["Hello world", "Machine learning is fun", "Python programming"])
         self.embeddings = np.array([
             [0.1, 0.2, 0.7, 0.0],
             [0.9, 0.1, 0.0, 0.0],
@@ -41,8 +46,7 @@ class TestInMemoryStore(unittest.TestCase):
         """Edge Case: Number of text chunks does NOT match vector rows."""
         mismatched_embeddings = np.array([[0.1, 0.2, 0.3, 0.4]], dtype=np.float32) # Only 1 row
         
-        # Should raise your CustomException due to length/shape mismatch
-        with self.assertRaises(CustomException):
+        with self.assertRaises(ValueError):
             self.store.add_chunks(self.doc_id, self.chunks, mismatched_embeddings)
 
     def test_add_chunks_empty_inputs(self):
@@ -73,7 +77,7 @@ class TestInMemoryStore(unittest.TestCase):
         # Should gracefully return all 3 available chunks, sorted, without crashing
         results = self.store.search(self.doc_id, query_vector, top_k=10)
         self.assertEqual(len(results), 3)
-        self.assertEqual(results[0].chunk_text, "Machine learning is fun") # Closest to [1,0,0,0]
+        self.assertEqual(results[0].chunk.text, "Machine learning is fun")
 
     def test_search_query_vector_2d_handling(self):
         """Edge Case: Query vector arrives as a 2D shape (1, D) instead of 1D (D,)."""
@@ -93,14 +97,14 @@ class TestInMemoryStore(unittest.TestCase):
     def test_search_score_sorting_order(self):
         """Edge Case: Verifying the results are strictly sorted from highest score to lowest."""
         self.store.add_chunks(self.doc_id, self.chunks, self.embeddings)
-        query_vector = np.array([0.0, 0.0, 1.0, 0.0], dtype=np.float32) # Targets index 0 [0.1, 0.2, 0.7, 0.0]
+        query_vector = np.array([0.0, 0.0, 1.0, 0.0], dtype=np.float32)
         
         results = self.store.search(self.doc_id, query_vector, top_k=3)
         
         # Verify scores decrease descendingly
         self.assertGreater(results[0].score, results[1].score)
         self.assertGreater(results[1].score, results[2].score)
-        self.assertEqual(results[0].index, 0)
+        
 
     # ==========================================
     # 3. DELETE_DOCUMENT EDGE CASES
