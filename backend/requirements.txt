@@ -6,7 +6,12 @@ python-dotenv==1.0.1
 pypdf 
 langchain-text-splitters
 sentence-transformers
-python-multipart
+multipart
+langchain
+langgraph
+langchain-google-genai
+langchain-community
+langchain-openai
 
 # testing
 pytest==8.3.3

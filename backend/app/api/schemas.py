@@ -21,4 +21,17 @@ class QueryResponse(BaseModel):
     question: str
     results: list[SourceChunk]
 
+ 
+class CitationOut(BaseModel):
+    ref: int
+    chunk_id : str
+    page: int
+    text: str
+    score: float
 
+class AskResponse(BaseModel):
+    document_id :str
+    question: str
+    answer: str
+    grounded: bool
+    citations: list[CitationOut]

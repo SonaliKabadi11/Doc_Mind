@@ -3,8 +3,8 @@ import zlib
 
 import numpy as np
 
+from app.generation.base import LLMProvider
 from app.models import Chunk
-
 
 class FakeIngestion:
     DIM = 64
@@ -41,3 +41,18 @@ class FakeIngestion:
 class EmptyIngestion(FakeIngestion):
     def extract_pages(self, source):
         return []
+
+
+class FakeLLM(LLMProvider):
+    """Records every prompt it receives; returns a canned answer or raises ``error``."""
+
+    def __init__(self, answer: str = "Python is used for machine learning [1].", error=None):
+        self.answer = answer
+        self.error = error
+        self.calls: list[tuple[str, str]] = []
+
+    def generate(self, system: str, user: str) -> str:
+        self.calls.append((system, user))
+        if self.error:
+            raise self.error
+        return self.answer

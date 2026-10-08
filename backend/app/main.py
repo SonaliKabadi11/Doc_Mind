@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 
 from app.api.routes import router
 from app.config.config import get_settings
-from app.exception import DocumentNotFoundError, IngestionError
+from app.exception import DocumentNotFoundError, IngestionError,  LLMError, LLMTimeoutError
 from app.logger import configure_logging
 
 settings = get_settings()
@@ -59,3 +59,21 @@ async def not_found_handler(_: Request, exc: DocumentNotFoundError) -> JSONRespo
 async def ingestion_handler(_: Request, exc: IngestionError) -> JSONResponse:
     return JSONResponse(status_code=422, content={"detail": str(exc)})
 
+# Fixed messages on purpose: provider details belong in the logs, not in API responses.
+@app.exception_handler(LLMTimeoutError)
+async def ll_timeout_handler(_:Request, exc: LLMTimeoutError) -> JSONResponse:
+    return JSONResponse(
+        status_code=504, 
+        content={
+            "detail": "The language model took too long to respond"
+        }
+    )
+
+@app.exception_handler(LLMError)
+async def llm_error_handler(_:Request, exc: LLMTimeoutError) -> JSONResponse:
+    return JSONResponse(
+        status_code=502,
+        content={
+            "detail": "The language model is unavailable.Try again later"
+        }
+    )

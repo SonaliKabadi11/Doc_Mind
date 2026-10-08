@@ -5,7 +5,7 @@ from app.api.routes import get_rag_service
 from app.main import app
 from app.retrieval.in_memory_store import InMemoryStore
 from app.services.rag_service import RAGService
-from tests.fakes_ingestion import FakeIngestion
+from tests.fakes import FakeIngestion
 
 
 @pytest.fixture

@@ -1,8 +1,15 @@
 import logging
+import os
+import sys
 
 import numpy as np
 
-from app.exception import DocumentNotFoundError
+logging.basicConfig(level=logging.CRITICAL)  # quiet, we just care about exception types
+# Ensure the `backend` directory is on sys.path so the `app` package imports
+# resolve when running tests from the repository root.
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from app.retrieval.base import DocumentNotFoundError
 from app.retrieval.in_memory_store import InMemoryStore
 
 logging.basicConfig(level=logging.CRITICAL)  # quiet, we just care about exception types

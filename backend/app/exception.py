@@ -6,10 +6,7 @@ def error_message_detail(error, error_detail:sys):
     # exc_info will give you details on which file, line the error has occured
     _,_,exc_tb = error_detail.exc_info() 
     file_name = exc_tb.tb_frame.f_code.co_filename
-    error_message = (
-        f"Error Occured in python script name [{file_name}] "
-        f"line number [{exc_tb.tb_lineno}] error message [{str(error)}]"
-    )
+    error_message = f"Error Occured in python script name [{file_name}] line number [{exc_tb.tb_lineno}] error message [{str(error)}]"
     return error_message
 
 
@@ -32,3 +29,9 @@ class DocumentNotFoundError(DocMindError):
 
 class IngestionError(DocMindError):
     """PDF parsing, chunking, or embedding failed."""
+
+class LLMError(DocMindError):
+    """The generation step failed (upstream error, empty response, ...)."""
+
+class LLMTimeoutError(LLMError):
+    """The LLM did not respond in time."""

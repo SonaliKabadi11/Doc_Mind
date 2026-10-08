@@ -3,7 +3,7 @@ import pytest
 from app.exception import DocumentNotFoundError, IngestionError
 from app.retrieval.in_memory_store import InMemoryStore
 from app.services.rag_service import RAGService
-from tests.fakes_ingestion import EmptyIngestion, FakeIngestion
+from tests.fakes import EmptyIngestion, FakeIngestion
 
 
 @pytest.fixture

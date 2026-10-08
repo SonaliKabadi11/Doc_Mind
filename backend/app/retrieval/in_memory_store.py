@@ -37,7 +37,7 @@ class InMemoryStore(Retrieval):
                 SearchResult(
                     chunk=doc["chunks"][i],
                     score=float(scores[i]),
-                    index=int(i),
+                   
                 )
                 for i in top_indices
             ]

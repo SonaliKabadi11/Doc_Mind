@@ -95,12 +95,9 @@ class Ingestion:
         Returns:
         ndarray = vector array of floats
         """
-        embeddings = self.model.encode(
-            chunks,
-            normalize_embeddings=True,
-            batch_size=64,
-            show_progress_bar=True,
-        )
+        #  That normalize_embeddings=True flag matters directly: it's what makes your InMemoryStore's dot-product-based search mathematically equal to cosine similarity, 
+                    # matching what you already documented in base.py's docstrings.
+        embeddings = self.model.encode(chunks, normalize_embeddings=True, batch_size=64, show_progress_bar=True)
         logger.info("Embeddings are created with the shappe %s", embeddings.shape)
         return embeddings
     

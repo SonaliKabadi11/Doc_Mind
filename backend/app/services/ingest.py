@@ -4,20 +4,22 @@ from pathlib import Path
 
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+path = Path(__file__).resolve().parents[1] / "data" / "HP1.pdf" 
 
 logger = logging.getLogger(__name__)
 
-from app.ingestion.base import Ingestion  # noqa: E402
-from app.retrieval.in_memory_store import InMemoryStore  # noqa: E402
-from app.services.rag_service import RAGService  # noqa: E402
+
+class DocMindError(Exception):
+    """Base class for all application errors."""
+
+class IngestionError(DocMindError):
+    """PDF parsing, chunking, or embedding failed."""
+
+from app.ingestion.base import Ingestion
+from app.retrieval.in_memory_store import InMemoryStore
 
 
-def ingest_document(
-    document_id: str,
-    ingestion: Ingestion,
-    store: InMemoryStore,
-    file_path: str,
-) -> int:
+def ingest_document(document_id: str,  ingestion: Ingestion, store: InMemoryStore, file_path:str ):
     """
     Stores the chunks and embeddings in given document_id
 
@@ -34,7 +36,23 @@ def ingest_document(
 
     """
 
-    result = RAGService(ingestion, store).ingest(file_path, document_id=document_id)
-    return result.num_chunks
+    try:
         
+        text = ingestion.extract_pdf(file_path)
+        chunks = ingestion.chunk_text(text)
+        embeddings = ingestion.embed_chunks(chunks)
+        chunk_len = store.add_chunks(document_id, chunks, embeddings)
+        return chunk_len
+    except Exception as e:
+        logger.exception("Ingestion failed for document %s", document_id)
+        raise IngestionError(f"Failed to ingest {document_id}") from e
 
+if __name__ == "__main__":
+    ingestion = Ingestion()
+    store = InMemoryStore()
+    document_id = 1
+    ingest_document(document_id, ingestion, store, path)
+    data = store.get_chunkDB()
+    for i in data:
+        print(i)
+    
