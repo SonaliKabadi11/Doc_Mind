@@ -29,10 +29,9 @@ Thumbs.db
 
 # App-generated files
 uploads/
-models/
+/models/
+/backend/models/
 tokenizers/
-vector_dbs/
-chroma_dbs/
 
 # Logs
 *.log
