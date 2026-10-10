@@ -30,7 +30,7 @@ class IngestResult:
     num_chunks: int
 
 class RAGService:
-    def __init__(self, ingestion:Ingestor, store: Retrieval, llm = LLMProvider, *, similarity_threshold : float = 0.30, max_context_chars : int = 12_000) -> None:
+    def __init__(self, ingestion:Ingestor, store: Retrieval, llm = LLMProvider, *, similarity_threshold : float = 0.10, max_context_chars : int = 12_000) -> None:
         self.ingestion = ingestion
         self.store = store
         self.llm = llm

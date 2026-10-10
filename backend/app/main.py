@@ -20,14 +20,21 @@ async def lifespan(app:FastAPI):
     from app.ingestion.base import Ingestion
     from app.retrieval.in_memory_store import InMemoryStore
     from app.services.rag_service import RAGService
+    from app.generation.factory import build_llm_provider
+
 
     logger.info("%s starting up in '%s' environment.", settings.app_name, settings.environment)
+    llm = build_llm_provider(settings)
     ingestion = Ingestion(
         model_name = settings.embedding_model,
         chunk_size = settings.chunk_size,
         chunk_overlap = settings.chunk_overlap
     )
-    app.state.rag_service = RAGService(ingestion, InMemoryStore())
+    app.state.rag_service = RAGService(ingestion, 
+                                       InMemoryStore(),
+                                       llm,
+                                       similarity_threshold=settings.similarity_threshold,
+                                       max_context_chars=settings.max_context_chars)
     yield
     logger.info("%s shutting down.", settings.app_name)
 

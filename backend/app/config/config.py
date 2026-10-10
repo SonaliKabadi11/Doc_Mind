@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     llm_timeout_seconds: float = 30.0
     llm_max_retries: int = 2
     # Generation guardrails
-    similarity_threshold: float = 0.30  
+    similarity_threshold: float = 0.10  
     max_context_chars: int = 12_000
 
 
