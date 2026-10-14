@@ -30,7 +30,7 @@ class IngestResult:
     num_chunks: int
 
 class RAGService:
-    def __init__(self, ingestion:Ingestor, store: Retrieval, llm = LLMProvider, *, similarity_threshold : float = 0.10, max_context_chars : int = 12_000) -> None:
+    def __init__(self, ingestion:Ingestor, store: Retrieval, llm : LLMProvider, *, similarity_threshold : float = 0.10, max_context_chars : int = 12_000) -> None:
         self.ingestion = ingestion
         self.store = store
         self.llm = llm
@@ -50,7 +50,7 @@ class RAGService:
             raise
         except Exception as e:
             logger.exception("Ingestion failed for coument %s", document_id)
-            raise IngestionError(f"Failed to ingest document:, {e}") from e
+            raise IngestionError(f"Failed to ingest document: {e}") from e
         return IngestResult(document_id, num_pages=len(pages),num_chunks= len(chunks))
 
     def retrieve(self, document_id: str, query: str, top_k: int = 5) -> list[SearchResult]:

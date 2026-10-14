@@ -27,7 +27,7 @@ class Ingestion:
     ) -> None:
         self.model = SentenceTransformer(model_name)
         self.splitter = RecursiveCharacterTextSplitter(
-                separators=["\n\n", "\n", ".", " "],
+                separators=["\n\n", "\n", ".", " ", ""],
                 chunk_size=chunk_size,
                 chunk_overlap=chunk_overlap,
                 keep_separator=True
@@ -97,7 +97,7 @@ class Ingestion:
         """
         #  That normalize_embeddings=True flag matters directly: it's what makes your InMemoryStore's dot-product-based search mathematically equal to cosine similarity, 
                     # matching what you already documented in base.py's docstrings.
-        embeddings = self.model.encode(chunks, normalize_embeddings=True, batch_size=64, show_progress_bar=True)
+        embeddings = self.model.encode(chunks, normalize_embeddings=True, batch_size=64, show_progress_bar=False)
         logger.info("Embeddings are created with the shappe %s", embeddings.shape)
         return embeddings
     

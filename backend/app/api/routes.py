@@ -42,6 +42,8 @@ def upload_document(file: UploadFile, service: RAGServiceDep, settings: Settings
     data = file.file.read(max_bytes + 1)
     if len(data) > max_bytes:
         raise HTTPException(413, f"File exceeds {settings.max_upload_mb} MB limit")
+    if not data.startswith(b"%PDF"):
+        raise HTTPException(415, "Only PDF files are supported")
 
     result = service.ingest(BytesIO(data))
     return IngestResponse(

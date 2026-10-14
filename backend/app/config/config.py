@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     max_upload_mb: int = 20
 
     # LLM (any OpenAI-compatible endpoint; Gemini by default)
-    llm_provider: str = "google_genai"
+    # llm_provider: str = "google_genai"
     llm_model: str ="gemini-3.1-flash-lite"
     llm_api_key: SecretStr | None = Field(default=None, validation_alias="GOOGLE_API_KEY")
     llm_base_url: str = Field(

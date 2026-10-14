@@ -68,19 +68,14 @@ async def ingestion_handler(_: Request, exc: IngestionError) -> JSONResponse:
 
 # Fixed messages on purpose: provider details belong in the logs, not in API responses.
 @app.exception_handler(LLMTimeoutError)
-async def ll_timeout_handler(_:Request, exc: LLMTimeoutError) -> JSONResponse:
+async def llm_timeout_handler(_: Request, exc: LLMTimeoutError) -> JSONResponse:
     return JSONResponse(
-        status_code=504, 
-        content={
-            "detail": "The language model took too long to respond"
-        }
+        status_code=504, content={"detail": "The language model took too long to respond."}
     )
 
+
 @app.exception_handler(LLMError)
-async def llm_error_handler(_:Request, exc: LLMTimeoutError) -> JSONResponse:
+async def llm_error_handler(_: Request, exc: LLMError) -> JSONResponse:
     return JSONResponse(
-        status_code=502,
-        content={
-            "detail": "The language model is unavailable.Try again later"
-        }
+        status_code=502, content={"detail": "The language model is unavailable. Try again later."}
     )

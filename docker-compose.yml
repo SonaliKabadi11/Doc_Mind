@@ -7,7 +7,7 @@ services:
       - ENVIRONMENT=development
      
     env_file:
-      - .env
+      - backend/.env
     depends_on:
       db:
         condition: service_healthy
