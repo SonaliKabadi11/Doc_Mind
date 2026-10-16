@@ -38,3 +38,7 @@ tokenizers/
 
 # Notebook checkpoints
 .ipynb_checkpoints/
+
+/backend/evals/docs/*.pdf
+/backend/evals/cache/
+/backend/evals/runs/
