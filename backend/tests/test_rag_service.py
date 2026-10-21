@@ -3,12 +3,12 @@ import pytest
 from app.exception import DocumentNotFoundError, IngestionError
 from app.retrieval.in_memory_store import InMemoryStore
 from app.services.rag_service import RAGService
-from tests.fakes import EmptyIngestion, FakeIngestion
+from tests.fakes import EmptyIngestion, FakeIngestion, FakeLLM
 
 
 @pytest.fixture
 def service() -> RAGService:
-    return RAGService(FakeIngestion(), InMemoryStore())
+    return RAGService(FakeIngestion(), InMemoryStore(), FakeLLM())
 
 
 def test_ingest_returns_counts_and_stores_chunks(service):
@@ -31,7 +31,7 @@ def test_retrieve_unknown_document_raises(service):
 
 
 def test_ingest_without_text_raises():
-    service = RAGService(EmptyIngestion(), InMemoryStore())
+    service = RAGService(EmptyIngestion(), InMemoryStore(), FakeLLM())
     with pytest.raises(IngestionError):
         service.ingest("scanned.pdf")
 

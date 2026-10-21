@@ -2,6 +2,7 @@ from app.config.config import Settings
 from app.generation.base import LLMProvider
 from app.generation.openai_compatible import OpenAICompatibleProvider
 
+
 def build_llm_provider(settings:Settings) -> LLMProvider:
     """Create the LLM provider from settings.
 

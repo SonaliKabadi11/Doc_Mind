@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 
 from app.api.routes import router
 from app.config.config import get_settings
-from app.exception import DocumentNotFoundError, IngestionError,  LLMError, LLMTimeoutError
+from app.exception import DocumentNotFoundError, IngestionError, LLMError, LLMTimeoutError
 from app.logger import configure_logging
 
 settings = get_settings()
@@ -17,10 +17,10 @@ logger = logging.getLogger(__name__)
 #  It turns a standard asynchronous function into a structured context manager.
 @asynccontextmanager
 async def lifespan(app:FastAPI):
+    from app.generation.factory import build_llm_provider
     from app.ingestion.base import Ingestion
     from app.retrieval.in_memory_store import InMemoryStore
     from app.services.rag_service import RAGService
-    from app.generation.factory import build_llm_provider
 
 
     logger.info("%s starting up in '%s' environment.", settings.app_name, settings.environment)

@@ -5,12 +5,12 @@ from app.api.routes import get_rag_service
 from app.main import app
 from app.retrieval.in_memory_store import InMemoryStore
 from app.services.rag_service import RAGService
-from tests.fakes import FakeIngestion
+from tests.fakes import FakeIngestion, FakeLLM
 
 
 @pytest.fixture
 def client():
-    service = RAGService(FakeIngestion(), InMemoryStore())
+    service = RAGService(FakeIngestion(), InMemoryStore(), FakeLLM())
     app.dependency_overrides[get_rag_service] = lambda: service
     yield TestClient(app)
     app.dependency_overrides.clear()
