@@ -12,8 +12,8 @@ from app.api.schemas import (
     SourceChunk,
 )
 from app.config.config import Settings, get_settings
-from app.services.rag_service import RAGService
 from app.models.models import Answer
+from app.services.rag_service import RAGService
 
 router = APIRouter()
 

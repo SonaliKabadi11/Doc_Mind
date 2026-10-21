@@ -1,5 +1,8 @@
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from app.retrieval.in_memory_store import InMemoryStore
 
 @dataclass(frozen=True)
 class Chunk:
@@ -45,3 +48,55 @@ class ParsedAnswer:
     invalid_refs: list[int] # refs the model cited that don't exist (for logging)
 
 
+@dataclass(frozen=True)
+class Question:
+    id: str
+    doc: str
+    question: str
+    answerable: bool
+    type: str
+    split: str
+    evidence: tuple[str, ...] = ()
+    refernce_answer: str | None = None
+
+@dataclass
+class Index:
+    doc: str
+    chunks: list[Chunk]
+    squashed_chunks: list[str]
+    squashed_doc: str
+    store: "InMemoryStore"
+
+@dataclass(frozen=True)
+class QuestionResult:
+    id: str
+    doc: str
+    type: str
+    answerable: bool
+    top_score: float  # similarity of the best-ranked chunk (relevant or not)
+    evidence_status: str  # intact | split | missing | n/a
+    rank: int | None  # 1-based rank of first chunk containing evidence (within MAX_K)
+
+
+@dataclass(frozen=True)
+class Summary:
+    n: int  # answerable questions
+    hits: dict[int, int]  # k -> number of questions with a relevant chunk in the top k
+    mrr: float
+    intact: int  # questions whose evidence survives chunking (the recall ceiling)
+
+@dataclass(frozen=True)
+class Config:
+    model: str
+    chunk_size: int
+    chunk_overlap: int
+
+    @property
+    def label(self) -> str:
+        return f"{self.chunk_size}/{self.chunk_overlap}"
+
+@dataclass
+class Experiment:
+    config: Config
+    results: list[QuestionResult]
+    num_chunks: int

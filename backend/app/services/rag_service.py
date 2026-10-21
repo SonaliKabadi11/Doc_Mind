@@ -8,12 +8,11 @@ from typing import BinaryIO, Protocol
 import numpy as np
 
 from app.exception import IngestionError
-from app.models.models import Chunk, SearchResult, Answer
-from app.retrieval.base import Retrieval
 from app.generation.base import LLMProvider
 from app.generation.citations import parse_citations
 from app.generation.prompt import REFUSAL_MESSAGE, build_prompt, is_refusal
-
+from app.models.models import Answer, Chunk, SearchResult
+from app.retrieval.base import Retrieval
 
 logger = logging.getLogger(__name__)
 

@@ -7,7 +7,7 @@ You told the model "only cite numbers that appear in the context", but a prompt 
 import re
 from collections.abc import Sequence
 
-from app.models.models import ParsedAnswer, Citation, SearchResult
+from app.models.models import Citation, ParsedAnswer, SearchResult
 
 # Optional leading blanks + "[1]" or "[1, 2]". Max 2 digits so "[2024]" is left alone.
 _CITE_RE = re.compile(r"([ \t]*)\[(\d{1,2}(?:[ \t]*,[ \t]*\d{1,2})*)\]")

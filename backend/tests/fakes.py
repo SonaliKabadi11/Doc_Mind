@@ -6,6 +6,7 @@ import numpy as np
 from app.generation.base import LLMProvider
 from app.models import Chunk
 
+
 class FakeIngestion:
     DIM = 64
 
