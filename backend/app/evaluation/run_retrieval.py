@@ -94,14 +94,14 @@ def _run(args: argparse.Namespace) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument("--docs", type=Path, default=Path("eval/docs"))
-    parser.add_argument("--questions", type=Path, default=Path("eval/questions"))
+    parser.add_argument("--docs", type=Path, default=Path("evals/docs"))
+    parser.add_argument("--questions", type=Path, default=Path("evals/questions"))
     parser.add_argument("--split", choices=["dev", "test", "all"], default="dev")
     parser.add_argument("--model", default=None, help="embedding model (default: from settings)")
     parser.add_argument("--chunk-sizes", type=int, nargs="+", default=[500, 1000, 1500])
     parser.add_argument("--overlaps", type=int, nargs="+", default=[0, 200])
     parser.add_argument("--detail", action="store_true", help="per-config breakdowns and misses")
-    parser.add_argument("--log-file", type=Path, help="log path (default: eval/runs/retrieval_<timestamp>.log)")
+    parser.add_argument("--log-file", type=Path, help="log path (default: evals/runs/retrieval_<timestamp>.log)")
     args = parser.parse_args()
     log_path = args.log_file or Path("eval/runs") / f"retrieval_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
     _run_logged(args, log_path)

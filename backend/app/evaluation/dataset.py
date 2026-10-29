@@ -80,7 +80,7 @@ def load_questions(path: Path) -> list[Question]:
                 raise ValueError(f"{where}: duplicate id {question.id!r}")
             seen.add(question.id)
             questions.append(question)
-        return questions
+    return questions
 
 def select_split(questions: list[Question], split:str)-> list[Question]:
     if split == "all":
